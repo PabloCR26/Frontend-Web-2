@@ -5,7 +5,7 @@
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; IC -2026&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">Dayans Chacón</a>.
+          <a href="https://adminlte.io" class="text-decoration-none">RentaCar</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VehicleController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -15,5 +16,4 @@ Route::get('/dashboard', function () {
     return view('layouts.dashboard');
 })->name('dashboard');
 
-
-
+Route::resource('vehiculos', VehicleController::class);

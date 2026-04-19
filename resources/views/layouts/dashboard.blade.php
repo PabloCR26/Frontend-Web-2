@@ -1,126 +1,254 @@
 <!doctype html>
 <html lang="en">
-<!--begin::Head-->
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Cursos Web III | Dashboard</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>RentaCar | Dashboard</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
 
-    <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="{{ asset('css/adminlte.css') }}" as="style" />
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-        crossorigin="anonymous" media="print" onload="this.media = 'all'" />
+<link rel="stylesheet" href="{{ asset('css/adminlte.css') }}" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-        crossorigin="anonymous" />
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-        crossorigin="anonymous" />
-
-    <link rel="stylesheet" href="{{ asset('css/adminlte.css') }}" />
 </head>
-<!--end::Head-->
-
-<!--begin::Body-->
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <!--begin::App Wrapper-->
-    <div class="app-wrapper">
 
-        <!--begin::Header-->
-        @include('layouts.navbar')
-        <!--end::Header-->
+<div class="app-wrapper">
 
-        <!--begin::Sidebar-->
-        @include('layouts.sidebar')
-        <!--end::Sidebar-->
+@include('layouts.navbar')
+@include('layouts.sidebar')
 
-        <!--begin::App Main-->
-        <main class="app-main">
-            <!--begin::App Content Header-->
-            <div class="app-content-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3 class="mb-0">Dashboard</h3>
-                        </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Inicio</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--end::App Content Header-->
+<main class="app-main">
 
-            <!--begin::App Content-->
-            <div class="app-content">
-                <div class="container-fluid">
+<div class="app-content-header">
+<div class="container-fluid">
 
-                    {{-- AQUÍ VAMOS A CONSTRUIR EL DASHBOARD POCO A POCO --}}
-                    {{-- el yield espera el nombre de un section --}}
-                    @yield('dashboard_content')
+<div class="row">
 
-                </div>
-            </div>
-            <!--end::App Content-->
-        </main>
-        <!--end::App Main-->
+<div class="col-sm-6">
+<h3 class="mb-0">Dashboard</h3>
+</div>
 
-        <!--begin::Footer-->
-        @include('layouts.footer')
-        <!--end::Footer-->
-    </div>
-    <!--end::App Wrapper-->
+<div class="col-sm-6">
 
-    <!--begin::Script-->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
-        crossorigin="anonymous"></script>
+<ol class="breadcrumb float-sm-end">
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous">
-    </script>
+<li class="breadcrumb-item">
+<a href="{{ route('dashboard') }}">Inicio</a>
+</li>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<li class="breadcrumb-item active">
+Dashboard
+</li>
 
-    <script src="{{ asset('js/adminlte.js') }}"></script>
+</ol>
 
-    <script>
-        const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-        const Default = {
-            scrollbarTheme: 'os-theme-light',
-            scrollbarAutoHide: 'leave',
-            scrollbarClickScroll: true,
-        };
+</div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-            const isMobile = window.innerWidth <= 992;
+</div>
 
-            if (
-                sidebarWrapper &&
-                OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
-                !isMobile
-            ) {
-                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-                    scrollbars: {
-                        theme: Default.scrollbarTheme,
-                        autoHide: Default.scrollbarAutoHide,
-                        clickScroll: Default.scrollbarClickScroll,
-                    },
-                });
-            }
-        });
-    </script>
-    <!--end::Script-->
+</div>
+</div>
+
+
+<div class="app-content">
+<div class="container-fluid">
+
+
+{{-- TARJETAS --}}
+<div class="row">
+
+<div class="col-lg-3 col-6">
+
+<div class="small-box text-bg-primary">
+
+<div class="inner">
+<h3>{{ isset($vehiculos) ? count($vehiculos) : 0 }}</h3>
+<p>Vehículos</p>
+</div>
+
+<div class="icon">
+<i class="bi bi-car-front-fill"></i>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-3 col-6">
+
+<div class="small-box text-bg-success">
+
+<div class="inner">
+<h3>
+{{ isset($vehiculos) ? collect($vehiculos)->where('estado','disponible')->count() : 0 }}
+</h3>
+<p>Disponibles</p>
+</div>
+
+<div class="icon">
+<i class="bi bi-check-circle-fill"></i>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-3 col-6">
+
+<div class="small-box text-bg-warning">
+
+<div class="inner">
+<h3>
+{{ isset($vehiculos) ? collect($vehiculos)->where('estado','alquilado')->count() : 0 }}
+</h3>
+<p>Alquilados</p>
+</div>
+
+<div class="icon">
+<i class="bi bi-key-fill"></i>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-3 col-6">
+
+<div class="small-box text-bg-danger">
+
+<div class="inner">
+<h3>
+{{ isset($vehiculos) ? collect($vehiculos)->where('estado','mantenimiento')->count() : 0 }}
+</h3>
+<p>Mantenimiento</p>
+</div>
+
+<div class="icon">
+<i class="bi bi-tools"></i>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+{{-- TABLA VEHICULOS --}}
+<div class="row">
+
+<div class="col-12">
+
+<div class="card">
+
+<div class="card-header">
+<h3 class="card-title">
+Vehículos recientes
+</h3>
+</div>
+
+<div class="card-body table-responsive">
+
+<table class="table table-bordered table-hover">
+
+<thead class="table-light">
+
+<tr>
+
+<th>ID</th>
+<th>Modelo</th>
+<th>Marca</th>
+<th>Estado</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+@if(isset($vehiculos) && count($vehiculos) > 0)
+
+@foreach($vehiculos as $vehiculo)
+
+<tr>
+
+<td>{{ $vehiculo['id'] }}</td>
+
+<td>{{ $vehiculo['modelo'] }}</td>
+
+<td>{{ $vehiculo['marca'] }}</td>
+
+<td>
+
+@if($vehiculo['estado'] == 'disponible')
+
+<span class="badge text-bg-success">
+Disponible
+</span>
+
+@elseif($vehiculo['estado'] == 'alquilado')
+
+<span class="badge text-bg-warning">
+Alquilado
+</span>
+
+@else
+
+<span class="badge text-bg-danger">
+Mantenimiento
+</span>
+
+@endif
+
+</td>
+
+</tr>
+
+@endforeach
+
+@else
+
+<tr>
+<td colspan="4" class="text-center">
+No hay vehículos registrados
+</td>
+</tr>
+
+@endif
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+@yield('dashboard_content')
+
+</div>
+</div>
+
+</main>
+
+@include('layouts.footer')
+
+</div>
+
+<script src="{{ asset('js/adminlte.js') }}"></script>
+
 </body>
-<!--end::Body-->
-
 </html>
