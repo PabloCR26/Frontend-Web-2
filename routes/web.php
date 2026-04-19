@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\MaintenanceController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -17,3 +18,4 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::resource('vehiculos', VehicleController::class);
+Route::resource('mantenimientos', MaintenanceController::class); 

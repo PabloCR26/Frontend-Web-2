@@ -127,6 +127,7 @@
 
                 <!-- ================= MANTENIMIENTO ================= -->
 
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-tools"></i>
@@ -139,14 +140,14 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('mantenimientos.create') }}" class="nav-link"> {{-- ✅ corregido --}}
                                 <i class="nav-icon bi bi-wrench"></i>
                                 <p>Registrar mantenimiento</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('mantenimientos.index') }}" class="nav-link"> {{-- ✅ corregido --}}
                                 <i class="nav-icon bi bi-list-check"></i>
                                 <p>Historial mantenimiento</p>
                             </a>
@@ -154,7 +155,6 @@
 
                     </ul>
                 </li>
-
 
                 <!-- ================= REPORTES ================= -->
 
