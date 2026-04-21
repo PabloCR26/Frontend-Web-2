@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -28,7 +29,9 @@ class VehicleController extends Controller
             ]
         ]);
 
-        $vehiculos = json_decode($response->getBody()->getContents(), true);
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        $vehiculos = $body['data']['data'] ?? [];
 
         return view('vehiculos.index', compact('vehiculos'));
     }
@@ -53,7 +56,24 @@ class VehicleController extends Controller
         ]);
 
         return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehículo creado correctamente');
+            ->with('success', 'Vehiculo creado correctamente');
+    }
+
+    // SHOW
+    public function show($id)
+    {
+        $token = session('access_token');
+
+        $response = $this->client->get("/api/vehicles/$id", [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ]
+        ]);
+
+        $vehiculo = json_decode($response->getBody()->getContents(), true);
+
+        return view('vehiculos.show', compact('vehiculo'));
     }
 
     // EDIT
@@ -87,7 +107,7 @@ class VehicleController extends Controller
         ]);
 
         return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehículo actualizado');
+            ->with('success', 'Vehiculo actualizado');
     }
 
     // DELETE
@@ -103,6 +123,6 @@ class VehicleController extends Controller
         ]);
 
         return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehículo eliminado');
+            ->with('success', 'Vehiculo eliminado');
     }
 }

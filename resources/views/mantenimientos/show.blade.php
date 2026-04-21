@@ -27,99 +27,107 @@
 
         <div class="app-content">
             <div class="container-fluid">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <span>Información del Mantenimiento</span>
-                                @if($mantenimiento['status'] === 'open')
-                                    <span class="badge bg-danger fs-6">🔴 Abierto</span>
-                                @else
-                                    <span class="badge bg-success fs-6">✅ Cerrado</span>
-                                @endif
-                            </div>
-                            <div class="card-body">
-
-                                <div class="alert alert-light border mb-4">
-                                    <i class="bi bi-truck me-1"></i>
-                                    <strong>Vehículo:</strong>
-                                    {{ $mantenimiento['vehicle_plate'] }} —
-                                    {{ $mantenimiento['vehicle_brand'] }} {{ $mantenimiento['vehicle_model'] }}
-                                    ({{ $mantenimiento['vehicle_year'] }})
+                @can('view', [\App\Models\Maintenance::class, $mantenimiento])
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span>Informacion del Mantenimiento</span>
+                                    @if($mantenimiento['status'] === 'open')
+                                        <span class="badge bg-danger fs-6">Abierto</span>
+                                    @else
+                                        <span class="badge bg-success fs-6">Cerrado</span>
+                                    @endif
                                 </div>
+                                <div class="card-body">
 
-                                <div class="row">
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted">Tipo</label>
-                                        <p>
-                                            @if($mantenimiento['type'] === 'preventive')
-                                                <span class="badge bg-info text-dark">Preventivo</span>
-                                            @else
-                                                <span class="badge bg-warning text-dark">Correctivo</span>
-                                            @endif
-                                        </p>
+                                    <div class="alert alert-light border mb-4">
+                                        <i class="bi bi-truck me-1"></i>
+                                        <strong>Vehiculo:</strong>
+                                        {{ $mantenimiento['vehicle_plate'] }} -
+                                        {{ $mantenimiento['vehicle_brand'] }} {{ $mantenimiento['vehicle_model'] }}
+                                        ({{ $mantenimiento['vehicle_year'] }})
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted">Estado</label>
-                                        <p>
-                                            @if($mantenimiento['status'] === 'open')
-                                                <span class="badge bg-danger">Abierto</span>
-                                            @else
-                                                <span class="badge bg-success">Cerrado</span>
-                                            @endif
-                                        </p>
+                                    <div class="row">
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="fw-semibold text-muted">Tipo</label>
+                                            <p>
+                                                @if($mantenimiento['type'] === 'preventive')
+                                                    <span class="badge bg-info text-dark">Preventivo</span>
+                                                @else
+                                                    <span class="badge bg-warning text-dark">Correctivo</span>
+                                                @endif
+                                            </p>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="fw-semibold text-muted">Estado</label>
+                                            <p>
+                                                @if($mantenimiento['status'] === 'open')
+                                                    <span class="badge bg-danger">Abierto</span>
+                                                @else
+                                                    <span class="badge bg-success">Cerrado</span>
+                                                @endif
+                                            </p>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="fw-semibold text-muted">Fecha de inicio</label>
+                                            <p>{{ \Carbon\Carbon::parse($mantenimiento['start_date'])->format('d/m/Y') }}</p>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="fw-semibold text-muted">Fecha de cierre</label>
+                                            <p>
+                                                {{ $mantenimiento['end_date']
+                                                    ? \Carbon\Carbon::parse($mantenimiento['end_date'])->format('d/m/Y')
+                                                    : '- Pendiente de cierre' }}
+                                            </p>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="fw-semibold text-muted">Costo</label>
+                                            <p>${{ number_format($mantenimiento['cost'], 2) }}</p>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <label class="fw-semibold text-muted">Descripcion</label>
+                                            <p>{{ $mantenimiento['description'] ?? '-' }}</p>
+                                        </div>
+
                                     </div>
 
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted">Fecha de inicio</label>
-                                        <p>{{ \Carbon\Carbon::parse($mantenimiento['start_date'])->format('d/m/Y') }}</p>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted">Fecha de cierre</label>
-                                        <p>
-                                            {{ $mantenimiento['end_date']
-                                                ? \Carbon\Carbon::parse($mantenimiento['end_date'])->format('d/m/Y')
-                                                : '— Pendiente de cierre' }}
-                                        </p>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted">Costo</label>
-                                        <p>${{ number_format($mantenimiento['cost'], 2) }}</p>
-                                    </div>
-
-                                    <div class="col-md-12 mb-3">
-                                        <label class="fw-semibold text-muted">Descripción</label>
-                                        <p>{{ $mantenimiento['description'] ?? '—' }}</p>
-                                    </div>
+                                    @if($mantenimiento['status'] === 'open')
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                            <strong>Vehiculo bloqueado:</strong>
+                                            Este vehiculo no puede ser asignado ni aprobado mientras tenga un mantenimiento abierto.
+                                        </div>
+                                    @endif
 
                                 </div>
-
-                                @if($mantenimiento['status'] === 'open')
-                                    <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                                        <strong>Vehículo bloqueado:</strong>
-                                        Este vehículo no puede ser asignado ni aprobado mientras tenga un mantenimiento abierto.
-                                    </div>
-                                @endif
-
-                            </div>
-                            <div class="card-footer d-flex gap-2">
-                                @if($mantenimiento['status'] === 'open')
-                                    <a href="{{ route('mantenimientos.edit', $mantenimiento['id']) }}" class="btn btn-primary">
-                                        <i class="bi bi-pencil"></i> Editar / Cerrar
+                                <div class="card-footer d-flex gap-2">
+                                    @if($mantenimiento['status'] === 'open')
+                                        @can('update', [\App\Models\Maintenance::class, $mantenimiento])
+                                            <a href="{{ route('mantenimientos.edit', $mantenimiento['id']) }}" class="btn btn-primary">
+                                                <i class="bi bi-pencil"></i> Editar / Cerrar
+                                            </a>
+                                        @endcan
+                                    @endif
+                                    <a href="{{ route('mantenimientos.index') }}" class="btn btn-secondary">
+                                        <i class="bi bi-arrow-left"></i> Volver
                                     </a>
-                                @endif
-                                <a href="{{ route('mantenimientos.index') }}" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Volver
-                                </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @else
+                    <div class="alert alert-danger">
+                        No tienes permiso para ver este mantenimiento.
+                    </div>
+                @endcan
             </div>
         </div>
     </main>

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
 <meta charset="utf-8" />
-<title>RentaCar | Crear Vehículo</title>
+<title>RentaCar | Crear Vehiculo</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -27,7 +27,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.m
 
                 <div class="row">
                     <div class="col-sm-6">
-                        <h3 class="mb-0">Crear Vehículo</h3>
+                        <h3 class="mb-0">Crear Vehiculo</h3>
                     </div>
                 </div>
 
@@ -37,111 +37,107 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.m
         <div class="app-content">
             <div class="container-fluid">
 
-                <div class="row justify-content-center">
-                    <div class="col-md-9">
+                @can('create', \App\Models\Vehicle::class)
+                    <div class="row justify-content-center">
+                        <div class="col-md-9">
 
-                        <div class="card">
+                            <div class="card">
 
-                            <div class="card-header">
-                                Registro de Vehículo
-                            </div>
+                                <div class="card-header">
+                                    Registro de Vehiculo
+                                </div>
 
-                            <div class="card-body">
+                                <div class="card-body">
 
-                                <form action="{{ route('vehiculos.store') }}" method="POST">
-                                    @csrf
+                                    <form action="{{ route('vehiculos.store') }}" method="POST">
+                                        @csrf
 
-                                    <div class="row">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label>Placa</label>
+                                                <input type="text" name="plate" class="form-control" id="plate" required>
+                                            </div>
 
-                                        {{-- PLACA --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Placa</label>
-                                            <input type="text" name="placa" class="form-control" required>
+                                            <div class="col-md-6 mb-3">
+                                                <label>Marca</label>
+                                                <input type="text" name="brand" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Modelo</label>
+                                                <input type="text" name="model" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Ano</label>
+                                                <input type="number" name="year" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Tipo de vehiculo</label>
+                                                <select name="type" class="form-control" required>
+                                                    <option value="">Seleccione</option>
+                                                    <option value="sedan">Sedan</option>
+                                                    <option value="pickup">Pick-up</option>
+                                                    <option value="suv">SUV</option>
+                                                    <option value="moto">Moto</option>
+                                                    <option value="van">Van</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Capacidad (personas)</label>
+                                                <input type="number" name="capacity" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Tipo de combustible</label>
+                                                <select name="fuel_type" class="form-control" required>
+                                                    <option value="">Seleccione</option>
+                                                    <option value="gasolina">Gasolina</option>
+                                                    <option value="diesel">Diesel</option>
+                                                    <option value="hibrido">Hibrido</option>
+                                                    <option value="electrico">Electrico</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label>Estado</label>
+                                                <select name="status" class="form-control" required>
+                                                    <option value="available">Disponible</option>
+                                                    <option value="assigned">Alquilado</option>
+                                                    <option value="maintenance">Mantenimiento</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label>Imagen del vehiculo (URL o ruta)</label>
+                                                <input type="text" name="image" class="form-control" placeholder="https://... o /img/car.jpg">
+                                            </div>
+
                                         </div>
 
-                                        {{-- MARCA --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Marca</label>
-                                            <input type="text" name="marca" class="form-control" required>
-                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            Guardar Vehiculo
+                                        </button>
 
-                                        {{-- MODELO --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Modelo</label>
-                                            <input type="text" name="modelo" class="form-control" required>
-                                        </div>
+                                        <a href="{{ route('vehiculos.index') }}" class="btn btn-secondary">
+                                            Cancelar
+                                        </a>
 
-                                        {{-- AÑO --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Año</label>
-                                            <input type="number" name="anio" class="form-control" required>
-                                        </div>
+                                    </form>
 
-                                        {{-- TIPO VEHÍCULO --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Tipo de vehículo</label>
-                                            <select name="tipo" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="sedan">Sedán</option>
-                                                <option value="pickup">Pick-up</option>
-                                                <option value="suv">SUV</option>
-                                                <option value="moto">Moto</option>
-                                                <option value="van">Van</option>
-                                            </select>
-                                        </div>
-
-                                        {{-- CAPACIDAD --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Capacidad (personas)</label>
-                                            <input type="number" name="capacidad" class="form-control" required>
-                                        </div>
-
-                                        {{-- COMBUSTIBLE --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Tipo de combustible</label>
-                                            <select name="combustible" class="form-control" required>
-                                                <option value="">Seleccione</option>
-                                                <option value="gasolina">Gasolina</option>
-                                                <option value="diesel">Diésel</option>
-                                                <option value="hibrido">Híbrido</option>
-                                                <option value="electrico">Eléctrico</option>
-                                            </select>
-                                        </div>
-
-                                        {{-- ESTADO --}}
-                                        <div class="col-md-6 mb-3">
-                                            <label>Estado</label>
-                                            <select name="estado" class="form-control" required>
-                                                <option value="disponible">Disponible</option>
-                                                <option value="alquilado">Alquilado</option>
-                                                <option value="mantenimiento">Mantenimiento</option>
-                                            </select>
-                                        </div>
-
-                                        {{-- IMAGEN --}}
-                                        <div class="col-md-12 mb-3">
-                                            <label>Imagen del vehículo (URL o ruta)</label>
-                                            <input type="text" name="imagen" class="form-control" placeholder="https://... o /img/car.jpg">
-                                        </div>
-
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">
-                                        Guardar Vehículo
-                                    </button>
-
-                                    <a href="{{ route('vehiculos.index') }}" class="btn btn-secondary">
-                                        Cancelar
-                                    </a>
-
-                                </form>
+                                </div>
 
                             </div>
 
                         </div>
-
                     </div>
-                </div>
+                @else
+                    <div class="alert alert-danger">
+                        No tienes permiso para registrar vehiculos.
+                    </div>
+                @endcan
 
             </div>
         </div>
