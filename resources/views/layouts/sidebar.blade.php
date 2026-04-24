@@ -73,18 +73,17 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('users.create') }}" class="nav-link">
                                 <i class="nav-icon bi bi-person-plus"></i>
                                 <p>Registrar cliente</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('users.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-people"></i>
                                 <p>Lista de clientes</p>
                             </a>
