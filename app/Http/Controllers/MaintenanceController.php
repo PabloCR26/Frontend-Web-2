@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use App\Http\Requests\StoreMaintenanceRequest;
+use App\Http\Requests\UpdateMaintenanceRequest;
 
 class MaintenanceController extends Controller
 {
@@ -21,61 +24,67 @@ class MaintenanceController extends Controller
     {
         $token = session('access_token');
 
-        $response = $this->client->get('/api/maintenances', [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        try {
+            $response = $this->client->get('/api/maintenances', [
+                'headers' => [
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ]
+            ]);
 
-        $data = json_decode($response->getBody()->getContents(), true);
-        $mantenimientos = $data['data'] ?? [];
+            $data = json_decode($response->getBody()->getContents(), true);
+            $mantenimientos = $data['data'] ?? [];
 
-        return view('mantenimientos.index', compact('mantenimientos'));
+            return view('mantenimientos.index', compact('mantenimientos'));
+            
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Error al conectar con la API.');
+            return view('mantenimientos.index', ['mantenimientos' => []]);
+        }
     }
-public function create()
-{
-    $token = session('access_token');
 
-    $response = $this->client->get('/api/vehicles', [
-        'headers' => [
-            'Accept'        => 'application/json',
-            'Authorization' => 'Bearer ' . $token,
-        ]
-    ]);
-
-    $data = json_decode($response->getBody()->getContents(), true);
-    $vehiculos = $data['data']['data'] ?? []; // <-- doble ['data']['data']
-
-    return view('mantenimientos.create', compact('vehiculos'));
-}
-    public function store(Request $request)
+    public function create()
     {
         $token = session('access_token');
 
         try {
+            $response = $this->client->get('/api/vehicles', [
+                'headers' => [
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ]
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+            $vehiculos = $data['data']['data'] ?? $data['data'] ?? [];
+
+            return view('mantenimientos.create', compact('vehiculos'));
+            
+        } catch (\Throwable $e) {
+            return redirect()->route('mantenimientos.index')->with('error', 'No se pudieron cargar los vehículos.');
+        }
+    }
+
+    public function store(StoreMaintenanceRequest $request)
+    {
+        $token = session('access_token');
+
+        try {
+            $payload = array_merge($request->validated(), ['status' => 'open']);
+
             $this->client->post('/api/maintenances', [
                 'headers' => [
                     'Accept'        => 'application/json',
                     'Authorization' => 'Bearer ' . $token,
                 ],
-                'json' => [
-                    'vehicle_id'  => $request->vehicle_id,
-                    'type'        => $request->type,
-                    'start_date'  => $request->start_date,
-                    'description' => $request->description,
-                    'cost'        => $request->cost,
-                    'status'      => 'open',
-                ]
+                'json' => $payload
             ]);
 
             return redirect()->route('mantenimientos.index')
                 ->with('success', 'Mantenimiento registrado correctamente.');
 
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $error = json_decode($e->getResponse()->getBody()->getContents(), true);
-            return back()->withInput()
-                ->with('error', $error['message'] ?? 'Error al registrar el mantenimiento.');
+        } catch (ClientException $e) {
+            return $this->handleApiErrors($e);
         }
     }
 
@@ -83,39 +92,47 @@ public function create()
     {
         $token = session('access_token');
 
-        $response = $this->client->get("/api/maintenances/$id", [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        try {
+            $response = $this->client->get("/api/maintenances/$id", [
+                'headers' => [
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ]
+            ]);
 
-        $data = json_decode($response->getBody()->getContents(), true);
-        $mantenimiento = $data['data'] ?? [];
+            $data = json_decode($response->getBody()->getContents(), true);
+            $mantenimiento = $data['data'] ?? [];
 
-        return view('mantenimientos.show', compact('mantenimiento'));
+            return view('mantenimientos.show', compact('mantenimiento'));
+            
+        } catch (\Throwable $e) {
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al cargar el mantenimiento.');
+        }
     }
 
     public function edit($id)
     {
-
         $token = session('access_token');
-      
 
-        $response = $this->client->get("/api/maintenances/$id", [
-            'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        try {
+            $response = $this->client->get("/api/maintenances/$id", [
+                'headers' => [
+                    'Accept'        => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ]
+            ]);
 
-        $data = json_decode($response->getBody()->getContents(), true);
-        $mantenimiento = $data['data'] ?? [];
+            $data = json_decode($response->getBody()->getContents(), true);
+            $mantenimiento = $data['data'] ?? [];
 
-        return view('mantenimientos.edit', compact('mantenimiento'));
+            return view('mantenimientos.edit', compact('mantenimiento'));
+            
+        } catch (\Throwable $e) {
+            return redirect()->route('mantenimientos.index')->with('error', 'Error al cargar el mantenimiento para edición.');
+        }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateMaintenanceRequest $request, $id)
     {
         $token = session('access_token');
 
@@ -125,13 +142,7 @@ public function create()
                     'Accept'        => 'application/json',
                     'Authorization' => 'Bearer ' . $token,
                 ],
-                'json' => [
-                    'type'        => $request->type,
-                    'description' => $request->description,
-                    'cost'        => $request->cost,
-                    'status'      => $request->status,
-                    'end_date'    => $request->end_date,
-                ]
+                'json' => $request->validated()
             ]);
 
             $msg = $request->status === 'closed'
@@ -140,10 +151,8 @@ public function create()
 
             return redirect()->route('mantenimientos.index')->with('success', $msg);
 
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $error = json_decode($e->getResponse()->getBody()->getContents(), true);
-            return back()->withInput()
-                ->with('error', $error['message'] ?? 'Error al actualizar.');
+        } catch (ClientException $e) {
+            return $this->handleApiErrors($e);
         }
     }
 
@@ -159,12 +168,27 @@ public function create()
                 ]
             ]);
 
-            return redirect()->route('mantenimientos.index')
-                ->with('success', 'Mantenimiento eliminado.');
+            return redirect()->route('mantenimientos.index')->with('success', 'Mantenimiento eliminado.');
 
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $error = json_decode($e->getResponse()->getBody()->getContents(), true);
-            return back()->with('error', $error['message'] ?? 'No se puede eliminar un mantenimiento abierto.');
+        } catch (ClientException $e) {
+            return $this->handleApiErrors($e);
         }
+    }
+
+    private function handleApiErrors(ClientException $e)
+    {
+        if ($e->getResponse()->getStatusCode() === 422) {
+            $responseBody = json_decode($e->getResponse()->getBody()->getContents(), true);
+            
+            if (isset($responseBody['errors'])) {
+                return back()->withErrors($responseBody['errors'])->withInput();
+            }
+            
+            if (isset($responseBody['error'])) {
+                return back()->withErrors(['api' => $responseBody['error']])->withInput();
+            }
+        }
+
+        return back()->with('error', 'Error de comunicación con el servidor.')->withInput();
     }
 }
