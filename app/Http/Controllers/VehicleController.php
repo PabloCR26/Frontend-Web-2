@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
+use App\Http\Requests\StoreVehicleRequest;
+use App\Http\Requests\UpdateVehicleRequest;
 
 class VehicleController extends Controller
 {
@@ -47,16 +51,43 @@ class VehicleController extends Controller
     {
         $token = session('access_token');
 
-        $this->client->post('/api/vehicles', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ],
-            'json' => $request->all()
-        ]);
+        $multipart = [];
+        foreach ($request->all() as $key => $val) {
+            if ($request->hasFile($key)) {
+                $multipart[] = [
+                    'name'     => $key,
+                    'contents' => fopen($val->path(), 'r'),
+                    'filename' => $val->getClientOriginalName()
+                ];
+            } else {
+                $multipart[] = [
+                    'name'     => $key,
+                    'contents' => $val
+                ];
+            }
+        }
 
-        return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehiculo creado correctamente');
+        try {
+            $this->client->post('/api/vehicles', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ],
+                'multipart' => $multipart
+            ]);
+
+            return redirect()->route('vehiculos.index')->with('success', 'Vehículo guardado');
+
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === 422) {
+                $responseBody = json_decode($e->getResponse()->getBody()->getContents(), true);
+                $erroresApi = $responseBody['errors'] ?? [];
+
+                return redirect()->back()->withErrors($erroresApi)->withInput();
+            }
+
+            throw $e;
+        }
     }
 
     // SHOW
@@ -94,20 +125,45 @@ class VehicleController extends Controller
     }
 
     // UPDATE
-    public function update(Request $request, $id)
+    public function update(UpdateVehicleRequest $request, $id)
     {
         $token = session('access_token');
+        $multipart = [];
 
-        $this->client->put("/api/vehicles/$id", [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ],
-            'json' => $request->all()
-        ]);
+        foreach ($request->validated() as $key => $value) {
+            if ($key !== 'image') {
+                $multipart[] = ['name' => $key, 'contents' => $value];
+            }
+        }
 
-        return redirect()->route('vehiculos.index')
-            ->with('success', 'Vehiculo actualizado');
+        if ($request->hasFile('image')) {
+            $multipart[] = [
+                'name'     => 'image',
+                'contents' => fopen($request->file('image')->path(), 'r'),
+                'filename' => $request->file('image')->getClientOriginalName()
+            ];
+        }
+
+        $multipart[] = ['name' => '_method', 'contents' => 'PUT'];
+
+        try {
+            $this->client->post("/api/vehicles/$id", [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ],
+                'multipart' => $multipart
+            ]);
+
+            return redirect()->route('vehiculos.index')->with('success', 'Vehículo actualizado con éxito');
+
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === 422) {
+                $errors = json_decode($e->getResponse()->getBody()->getContents(), true)['errors'];
+                return redirect()->back()->withErrors($errors)->withInput();
+            }
+            throw $e;
+        }
     }
 
     // DELETE

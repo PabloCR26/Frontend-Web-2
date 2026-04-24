@@ -30,8 +30,15 @@
         default => 'Desconocido',
     };
 
-    $image = $item['image']
-        ?? 'https://placehold.co/900x500/e2e8f0/475569?text=Vehiculo';
+    $apiHost = 'http://127.0.0.1:8000';
+    
+    $cleanPath = str_replace('public/', '', $item['image'] ?? '');
+    
+    if (!empty($cleanPath)) {
+        $image = $apiHost . '/storage/' . $cleanPath;
+    } else {
+        $image = 'https://placehold.co/900x500/e2e8f0/475569?text=Sin+Imagen';
+    }
 @endphp
 
 <div class="app-wrapper">
@@ -45,11 +52,11 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3>Detalle del Vehiculo</h3>
+                    <h3 class="mb-0">Detalle del Vehiculo</h3>
                 </div>
                 <div class="col-sm-6 text-end">
                     <a href="{{ route('vehiculos.index') }}" class="btn btn-secondary">
-                        Volver
+                        <i class="bi bi-arrow-left"></i> Volver
                     </a>
                 </div>
             </div>
@@ -59,78 +66,85 @@
     <div class="app-content">
         <div class="container-fluid">
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
                     <div class="row g-4">
                         <div class="col-lg-6">
                             <img src="{{ $image }}"
-                                 class="img-fluid rounded border w-100"
-                                 style="height: 360px; object-fit: cover;">
+                                 class="img-fluid rounded border w-100 shadow-sm"
+                                 style="height: 400px; object-fit: cover;"
+                                 onerror="this.src='https://placehold.co/900x500/e2e8f0/475569?text=Error+al+cargar+imagen'">
                         </div>
 
                         <div class="col-lg-6">
-                            <div class="d-flex justify-content-between mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
-                                    <h2>{{ $item['brand'] ?? 'Sin marca' }}</h2>
-                                    <h4 class="text-muted">{{ $item['model'] ?? 'Sin modelo' }}</h4>
+                                    <h1 class="display-5 fw-bold mb-0">{{ $item['brand'] ?? 'Sin marca' }}</h1>
+                                    <h3 class="text-muted">{{ $item['model'] ?? 'Sin modelo' }}</h3>
                                 </div>
 
-                                <span class="badge {{ $badgeClass }}">
+                                <span class="badge {{ $badgeClass }} fs-5 px-3 py-2">
                                     {{ $statusLabel }}
                                 </span>
                             </div>
 
-                            <div class="row g-3">
+                            <hr>
+
+                            <div class="row g-4 py-2">
                                 <div class="col-sm-6">
-                                    <strong>Placa:</strong> {{ $item['plate'] ?? 'N/D' }}
+                                    <div class="text-muted small">Placa</div>
+                                    <div class="fs-5 fw-bold">{{ $item['plate'] ?? 'N/D' }}</div>
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <strong>Ano:</strong> {{ $item['year'] ?? 'N/D' }}
+                                    <div class="text-muted small">Año</div>
+                                    <div class="fs-5 fw-bold">{{ $item['year'] ?? 'N/D' }}</div>
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <strong>Tipo:</strong> {{ $item['type'] ?? 'N/D' }}
+                                    <div class="text-muted small">Tipo de Vehículo</div>
+                                    <div class="fs-5 fw-bold text-capitalize">{{ $item['type'] ?? 'N/D' }}</div>
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <strong>Capacidad:</strong> {{ $item['capacity'] ?? 'N/D' }}
+                                    <div class="text-muted small">Capacidad</div>
+                                    <div class="fs-5 fw-bold">{{ $item['capacity'] ?? 'N/D' }} personas</div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="text-muted small">Combustible</div>
+                                    <div class="fs-5 fw-bold text-capitalize">{{ $item['fuel_type'] ?? 'N/D' }}</div>
                                 </div>
                             </div>
 
-                            <div class="mt-4 d-flex gap-2 flex-wrap">
+                            <div class="mt-5 d-flex gap-2 flex-wrap">
                                 @can('update', [\App\Models\Vehicle::class, $item])
                                     <a href="{{ route('vehiculos.edit', $item['id']) }}"
-                                       class="btn btn-primary">
-                                        Editar
+                                       class="btn btn-primary btn-lg px-4">
+                                        <i class="bi bi-pencil-square"></i> Editar
                                     </a>
                                 @endcan
 
                                 @can('update', [\App\Models\VehicleRequest::class, $item])
                                     <a href="{{ route('vehiculos.show', ['vehiculo' => $item['id'], 'accion' => 'asignar']) }}"
-                                       class="btn btn-success">
-                                        Asignar
+                                       class="btn btn-success btn-lg px-4">
+                                        <i class="bi bi-person-check"></i> Asignar
                                     </a>
                                 @endcan
 
                                 @can('create', \App\Models\VehicleRequest::class)
                                     <a href="{{ route('vehiculos.show', ['vehiculo' => $item['id'], 'accion' => 'solicitar']) }}"
-                                       class="btn btn-success">
-                                        Solicitar
+                                       class="btn btn-success btn-lg px-4">
+                                        <i class="bi bi-send"></i> Solicitar
                                     </a>
                                 @endcan
 
                                 @can('create', \App\Models\Maintenance::class)
                                     <a href="{{ route('mantenimientos.create', ['vehicle_id' => $item['id']]) }}"
-                                       class="btn btn-warning">
-                                        Mantenimiento
+                                       class="btn btn-warning btn-lg px-4">
+                                        <i class="bi bi-tools"></i> Mantenimiento
                                     </a>
                                 @endcan
-
-                                <a href="{{ route('vehiculos.index') }}"
-                                   class="btn btn-outline-secondary">
-                                    Volver
-                                </a>
                             </div>
 
                         </div>

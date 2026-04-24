@@ -66,20 +66,29 @@
                                         default => 'Desconocido',
                                     };
 
-                                    $image = $vehiculo['image']
-                                        ?? 'https://placehold.co/700x450/e2e8f0/475569?text=Vehiculo';
+                                    // --- LÓGICA DE IMAGEN CORREGIDA ---
+                                    $apiHost = 'http://127.0.0.1:8000'; // Tu API
+                                    
+                                    if (!empty($vehiculo['image'])) {
+                                        // Limpiamos la ruta por si el back guardó "public/"
+                                        $cleanPath = str_replace('public/', '', $vehiculo['image']);
+                                        $imagePath = $apiHost . '/storage/' . $cleanPath;
+                                    } else {
+                                        $imagePath = 'https://placehold.co/700x450/e2e8f0/475569?text=Vehiculo';
+                                    }
                                 @endphp
 
                                 <div class="col-sm-6 col-xl-4">
                                     <div class="card h-100 shadow-sm">
-                                        <img src="{{ $image }}"
+                                        <img src="{{ $imagePath }}"
                                              class="card-img-top"
-                                             style="height: 220px; object-fit: cover;">
+                                             style="height: 220px; object-fit: cover;"
+                                             onerror="this.src='https://placehold.co/700x450/e2e8f0/475569?text=Error+al+cargar'">
 
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div>
-                                                    <h5>{{ $vehiculo['brand'] ?? 'Sin marca' }}</h5>
+                                                    <h5 class="fw-bold">{{ $vehiculo['brand'] ?? 'Sin marca' }}</h5>
                                                     <small class="text-muted">{{ $vehiculo['model'] ?? 'Sin modelo' }}</small>
                                                 </div>
 
@@ -97,34 +106,34 @@
                                         <div class="card-footer bg-white">
                                             <div class="d-flex justify-content-between flex-wrap gap-2">
                                                 <a href="{{ route('vehiculos.show', $vehiculo['id']) }}"
-                                                   class="btn btn-outline-secondary btn-sm">
+                                                   class="btn btn-outline-secondary btn-sm" title="Ver Detalle">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
 
                                                 @can('update', [\App\Models\Vehicle::class, $vehiculo])
                                                     <a href="{{ route('vehiculos.edit', $vehiculo['id']) }}"
-                                                       class="btn btn-outline-primary btn-sm">
+                                                       class="btn btn-outline-primary btn-sm" title="Editar">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
                                                 @endcan
 
                                                 @can('update', [\App\Models\VehicleRequest::class, $vehiculo])
                                                     <a href="{{ route('vehiculos.show', ['vehiculo' => $vehiculo['id'], 'accion' => 'asignar']) }}"
-                                                       class="btn btn-success btn-sm">
+                                                       class="btn btn-success btn-sm" title="Asignar">
                                                         <i class="bi bi-person-check"></i>
                                                     </a>
                                                 @endcan
                                                 
                                                 @can('create', \App\Models\VehicleRequest::class)
                                                     <a href="{{ route('vehiculos.show', ['vehiculo' => $vehiculo['id'], 'accion' => 'solicitar']) }}"
-                                                       class="btn btn-success btn-sm">
+                                                       class="btn btn-success btn-sm" title="Solicitar">
                                                         <i class="bi bi-send-check"></i>
                                                     </a>
                                                 @endcan
 
                                                 @can('create', \App\Models\Maintenance::class)
                                                     <a href="{{ route('mantenimientos.create', ['vehicle_id' => $vehiculo['id']]) }}"
-                                                       class="btn btn-warning btn-sm">
+                                                       class="btn btn-warning btn-sm" title="Mantenimiento">
                                                         <i class="bi bi-tools"></i>
                                                     </a>
                                                 @endcan
