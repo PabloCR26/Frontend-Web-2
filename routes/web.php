@@ -19,7 +19,8 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 
+Route::patch('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 Route::resource('users', UserController::class);
-Route::resource('vehiculos', VehicleController::class);
-Route::resource('mantenimientos', MaintenanceController::class); 
 
+Route::resource('vehiculos', VehicleController::class);
+Route::resource('mantenimientos', MaintenanceController::class);
