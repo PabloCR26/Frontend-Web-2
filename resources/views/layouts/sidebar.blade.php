@@ -57,7 +57,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         @can('create', \App\Models\Vehicle::class)
                         <li class="nav-item">
@@ -67,11 +66,16 @@
                             </a>
                         </li>
                         @endcan
-
                         <li class="nav-item">
                             <a href="{{ route('vehiculos.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-list-ul"></i>
                                 <p>Lista de vehiculos</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('solicitudes.index') }}" class="nav-link">
+                                <i class="nav-icon bi bi-list-ul"></i>
+                                <p>Solicitudes</p>
                             </a>
                         </li>
                     </ul>
@@ -92,7 +96,6 @@
                                 <p>Registrar cliente</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-people"></i>
@@ -110,7 +113,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -118,7 +120,6 @@
                                 <p>Nuevo alquiler</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon bi bi-journal-text"></i>
@@ -129,6 +130,33 @@
                 </li>
 
                 @can('viewAny', \App\Models\Maintenance::class)
+<<<<<<< Updated upstream
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-tools"></i>
+                            <p>
+                                Mantenimiento
+                                <i class="nav-arrow bi bi-chevron-right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('create', \App\Models\Maintenance::class)
+                                <li class="nav-item">
+                                    <a href="{{ route('mantenimientos.create') }}" class="nav-link">
+                                        <i class="nav-icon bi bi-wrench"></i>
+                                        <p>Registrar mantenimiento</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            <li class="nav-item">
+                                <a href="{{ route('mantenimientos.index') }}" class="nav-link">
+                                    <i class="nav-icon bi bi-list-check"></i>
+                                    <p>Historial mantenimiento</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+=======
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-tools"></i>
@@ -156,6 +184,7 @@
                         </li>
                     </ul>
                 </li>
+>>>>>>> Stashed changes
                 @endcan
                 @can('create', \App\Models\vehicle::class)
                 <li class="nav-header">REPORTES</li>
@@ -168,19 +197,23 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-graph-up"></i>
-                                <p>Ingresos</p>
+                            <a href="{{ route('reports.availability') }}" class="nav-link">
+                                <i class="nav-icon bi bi-calendar-check"></i>
+                                <p>Disponibilidad</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-car-front"></i>
-                                <p>Vehiculos activos</p>
+                            <a href="{{ route('reports.fleet-usage') }}" class="nav-link">
+                                <i class="nav-icon bi bi-truck"></i>
+                                <p>Uso de flotilla</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('reports.driver-history') }}" class="nav-link">
+                                <i class="nav-icon bi bi-person-lines-fill"></i>
+                                <p>Historial chofer</p>
                             </a>
                         </li>
                     </ul>
@@ -196,7 +229,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="#" class="nav-link">

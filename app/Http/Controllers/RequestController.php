@@ -19,9 +19,23 @@ class RequestController extends Controller
         ]);
     }
 
+    public function index()
+    {
+        $token = session('access_token');
 
-    public function index() {}
+        $response = $this->client->get('/api/vehicle-requests', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ]
+        ]);
 
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        $solicitudes = $body['data']['data'] ?? [];
+
+        return view('solicitudes.index', compact('solicitudes'));
+    }
 
 
     public function create(Request $request)
@@ -95,7 +109,7 @@ class RequestController extends Controller
             ]);
 
             return redirect()
-                ->route('mantenimientos.index')
+                ->route('vehiculos.index')
                 ->with('success', 'Solicitud creada correctamente');
         } catch (ClientException $e) {
 
@@ -117,4 +131,6 @@ class RequestController extends Controller
             throw $e;
         }
     }
+
+    public function show() {}
 }

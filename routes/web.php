@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\RequestController;
+
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -26,3 +28,7 @@ Route::resource('users', UserController::class);
 Route::resource('vehiculos', VehicleController::class);
 Route::resource('mantenimientos', MaintenanceController::class);
 Route::resource('solicitudes', RequestController::class);
+
+Route::get('/reports/availability',   [ReportController::class, 'availability'])->name('reports.availability');
+Route::get('/reports/fleet-usage',    [ReportController::class, 'fleetUsage'])->name('reports.fleet-usage');
+Route::get('/reports/driver-history', [ReportController::class, 'driverHistory'])->name('reports.driver-history');
