@@ -36,7 +36,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         @can('create', \App\Models\Vehicle::class)
                             <li class="nav-item">
@@ -46,7 +45,6 @@
                                 </a>
                             </li>
                         @endcan
-
                         <li class="nav-item">
                             <a href="{{ route('vehiculos.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-list-ul"></i>
@@ -71,7 +69,6 @@
                                 <p>Registrar cliente</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a href="{{ route('users.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-people"></i>
@@ -89,7 +86,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -97,7 +93,6 @@
                                 <p>Nuevo alquiler</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon bi bi-journal-text"></i>
@@ -116,7 +111,6 @@
                                 <i class="nav-arrow bi bi-chevron-right"></i>
                             </p>
                         </a>
-
                         <ul class="nav nav-treeview">
                             @can('create', \App\Models\Maintenance::class)
                                 <li class="nav-item">
@@ -126,7 +120,6 @@
                                     </a>
                                 </li>
                             @endcan
-
                             <li class="nav-item">
                                 <a href="{{ route('mantenimientos.index') }}" class="nav-link">
                                     <i class="nav-icon bi bi-list-check"></i>
@@ -147,19 +140,23 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-graph-up"></i>
-                                <p>Ingresos</p>
+                            <a href="{{ route('reports.availability') }}" class="nav-link">
+                                <i class="nav-icon bi bi-calendar-check"></i>
+                                <p>Disponibilidad</p>
                             </a>
                         </li>
-
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-car-front"></i>
-                                <p>Vehiculos activos</p>
+                            <a href="{{ route('reports.fleet-usage') }}" class="nav-link">
+                                <i class="nav-icon bi bi-truck"></i>
+                                <p>Uso de flotilla</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('reports.driver-history') }}" class="nav-link">
+                                <i class="nav-icon bi bi-person-lines-fill"></i>
+                                <p>Historial chofer</p>
                             </a>
                         </li>
                     </ul>
@@ -175,7 +172,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="#" class="nav-link">
