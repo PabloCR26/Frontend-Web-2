@@ -7,6 +7,7 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\RequestController;
 
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
@@ -28,7 +29,18 @@ Route::resource('users', UserController::class);
 Route::resource('vehiculos', VehicleController::class);
 Route::resource('mantenimientos', MaintenanceController::class);
 Route::resource('solicitudes', RequestController::class);
+Route::resource('viajes', TripController::class);
+
 
 Route::get('/reports/availability',   [ReportController::class, 'availability'])->name('reports.availability');
 Route::get('/reports/fleet-usage',    [ReportController::class, 'fleetUsage'])->name('reports.fleet-usage');
 Route::get('/reports/driver-history', [ReportController::class, 'driverHistory'])->name('reports.driver-history');
+
+Route::patch('solicitudes/{id}/approve', [RequestController::class, 'approve'])
+    ->name('solicitudes.approve');
+
+Route::patch('solicitudes/{id}/reject', [RequestController::class, 'reject'])
+    ->name('solicitudes.reject');
+
+Route::patch('solicitudes/{id}/cancel', [RequestController::class, 'cancel'])
+    ->name('solicitudes.cancel');

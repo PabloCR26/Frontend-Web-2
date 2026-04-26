@@ -133,4 +133,61 @@ class RequestController extends Controller
     }
 
     public function show() {}
+
+    public function approve($id)
+    {
+        $token = session('access_token');
+
+        try {
+            $this->client->patch("/api/vehicle-requests/{$id}/approve", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            return back()->with('success', 'Solicitud aprobada');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'No se pudo aprobar la solicitud');
+        }
+    }
+
+    public function reject(Request $request, $id)
+    {
+        $token = session('access_token');
+
+        try {
+            $this->client->patch("/api/vehicle-requests/{$id}/reject", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ],
+                'form_params' => [
+                    'observation' => $request->observation
+                ]
+            ]);
+
+            return back()->with('success', 'Solicitud rechazada');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'No se pudo rechazar la solicitud');
+        }
+    }
+
+    public function cancel($id)
+    {
+        $token = session('access_token');
+
+        try {
+            $this->client->patch("/api/vehicle-requests/{$id}/cancel", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept' => 'application/json',
+                ]
+            ]);
+
+            return back()->with('success', 'Solicitud cancelada');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'No se pudo cancelar la solicitud');
+        }
+    }
 }

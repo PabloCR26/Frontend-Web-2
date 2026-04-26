@@ -130,7 +130,6 @@
                 </li>
 
                 @can('viewAny', \App\Models\Maintenance::class)
-<<<<<<< Updated upstream
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon bi bi-tools"></i>
@@ -156,35 +155,6 @@
                             </li>
                         </ul>
                     </li>
-=======
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-tools"></i>
-                        <p>
-                            Mantenimiento
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-
-                    <ul class="nav nav-treeview">
-                        @can('create', \App\Models\Maintenance::class)
-                        <li class="nav-item">
-                            <a href="{{ route('mantenimientos.create') }}" class="nav-link">
-                                <i class="nav-icon bi bi-wrench"></i>
-                                <p>Registrar mantenimiento</p>
-                            </a>
-                        </li>
-                        @endcan
-
-                        <li class="nav-item">
-                            <a href="{{ route('mantenimientos.index') }}" class="nav-link">
-                                <i class="nav-icon bi bi-list-check"></i>
-                                <p>Historial mantenimiento</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
->>>>>>> Stashed changes
                 @endcan
                 @can('create', \App\Models\vehicle::class)
                 <li class="nav-header">REPORTES</li>

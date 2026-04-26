@@ -93,10 +93,10 @@
 
                                             <!-- ESTADO -->
                                             <td>
-                                                <span class="badge bg-{
-                                                    { $solicitud['status'] == 'approved' ? 'success' :
-                                                    ($solicitud['status'] == 'rejected' ? 'danger' :
-                                                    ($solicitud['status'] == 'canceled' ? 'secondary' : 'warning')) }}">
+                                                <span class="badge 
+                                                    {{ $solicitud['status'] == 'approved' ? 'bg-success' :
+                                                       ($solicitud['status'] == 'rejected' ? 'bg-danger' :
+                                                       ($solicitud['status'] == 'canceled' ? 'bg-secondary' : 'bg-warning')) }}">
                                                     {{ ucfirst($solicitud['status']) }}
                                                 </span>
                                             </td>
@@ -107,9 +107,12 @@
                                                 {{-- 🔵 OPERADOR --}}
                                                 @if(auth()->user()->role_id != 3)
 
+                                                    {{-- APROBAR / RECHAZAR --}}
                                                     @if($solicitud['status'] == 'pending')
+
                                                         <form action="{{ route('solicitudes.approve', $solicitud['id']) }}" method="POST" class="d-inline">
                                                             @csrf
+                                                            @method('PATCH')
                                                             <button class="btn btn-success btn-sm">
                                                                 <i class="bi bi-check"></i>
                                                             </button>
@@ -117,12 +120,15 @@
 
                                                         <form action="{{ route('solicitudes.reject', $solicitud['id']) }}" method="POST" class="d-inline">
                                                             @csrf
+                                                            @method('PATCH')
                                                             <button class="btn btn-danger btn-sm">
                                                                 <i class="bi bi-x"></i>
                                                             </button>
                                                         </form>
+
                                                     @endif
 
+                                                    {{-- INICIAR VIAJE --}}
                                                     @if($solicitud['status'] == 'approved')
                                                         <a href="{{ route('viajes.create', ['request_id' => $solicitud['id']]) }}"
                                                            class="btn btn-primary btn-sm">
@@ -134,12 +140,15 @@
 
                                                 {{-- 🟢 CHOFER --}}
                                                 @if(auth()->id() == $solicitud['user_id'] && $solicitud['status'] == 'pending')
-                                                    <form action="{{ route('solicitudes.index', $solicitud['id']) }}" method="POST" class="d-inline">
+
+                                                    <form action="{{ route('solicitudes.cancel', $solicitud['id']) }}" method="POST" class="d-inline">
                                                         @csrf
+                                                        @method('PATCH')
                                                         <button class="btn btn-secondary btn-sm">
                                                             <i class="bi bi-x-circle"></i>
                                                         </button>
                                                     </form>
+
                                                 @endif
 
                                             </td>
