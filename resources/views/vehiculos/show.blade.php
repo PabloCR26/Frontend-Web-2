@@ -126,14 +126,14 @@
                                 @endcan
 
                                 @can('update', [\App\Models\VehicleRequest::class, $item])
-                                    <a href="{{ route('vehiculos.show', ['vehiculo' => $item['id'], 'accion' => 'asignar']) }}"
+                                    <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'asignar']) }}"
                                        class="btn btn-success btn-lg px-4">
-                                        <i class="bi bi-person-check"></i> Asignar
+                                        <i class="bi bi-person-check"></i>   Asignar
                                     </a>
                                 @endcan
 
                                 @can('create', \App\Models\VehicleRequest::class)
-                                    <a href="{{ route('vehiculos.show', ['vehiculo' => $item['id'], 'accion' => 'solicitar']) }}"
+                                    <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'solicitar']) }}"
                                        class="btn btn-success btn-lg px-4">
                                         <i class="bi bi-send"></i> Solicitar
                                     </a>
