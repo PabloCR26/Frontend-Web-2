@@ -22,22 +22,52 @@ class VehicleController extends Controller
     }
 
     // LISTAR
-    public function index()
+    public function index(Request $request)
     {
         $token = session('access_token');
+        $status = $request->query('status');
+        $start_datetime = $request->query('start_datetime');
+        $end_datetime = $request->query('end_datetime');
 
-        $response = $this->client->get('/api/vehicles', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        try {
+            if (!empty($start_datetime) && !empty($end_datetime)) {
+                
+                $response = $this->client->post('/api/vehicle-requests/availability', [
+                    'headers' => [
+                        'Accept'        => 'application/json',
+                        'Authorization' => 'Bearer ' . $token,
+                    ],
+                    'json' => [
+                        'start_datetime' => \Carbon\Carbon::parse($start_datetime)->format('Y-m-d H:i:s'),
+                        'end_datetime'   => \Carbon\Carbon::parse($end_datetime)->format('Y-m-d H:i:s'),
+                    ]
+                ]);
 
-        $body = json_decode($response->getBody()->getContents(), true);
+            } 
+            else {
+                $response = $this->client->get('/api/vehicles', [
+                    'headers' => [
+                        'Accept'        => 'application/json',
+                        'Authorization' => 'Bearer ' . $token,
+                    ],
+                    'query' => array_filter(['status' => $status])
+                ]);
+            }
 
-        $vehiculos = $body['data']['data'] ?? [];
+            $body = json_decode($response->getBody()->getContents(), true);
+            $vehiculos = $body['data']['data'] ?? $body['data'] ?? [];
 
-        return view('vehiculos.index', compact('vehiculos'));
+            return view('vehiculos.index', compact('vehiculos', 'status', 'start_datetime', 'end_datetime'));
+
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Error al cargar los vehículos desde la base de datos.');
+            return view('vehiculos.index', [
+                'vehiculos' => [], 
+                'status' => $status, 
+                'start_datetime' => $start_datetime, 
+                'end_datetime' => $end_datetime
+            ]);
+        }
     }
 
     // FORM CREATE

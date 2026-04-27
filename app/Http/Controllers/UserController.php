@@ -222,4 +222,6 @@ class UserController extends Controller
 
         return view('users.deleted', compact('users'));
     }
+
+    
 }

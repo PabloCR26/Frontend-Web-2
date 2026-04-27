@@ -125,25 +125,46 @@
                                     </a>
                                 @endcan
 
+                                {{-- REQUERIMIENTO F.6: BLOQUEO ASIGNACIÓN --}}
                                 @can('update', [\App\Models\VehicleRequest::class, $item])
-                                    <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'asignar']) }}"
-                                       class="btn btn-success btn-lg px-4">
-                                        <i class="bi bi-person-check"></i>   Asignar
-                                    </a>
+                                    @if($status == 'maintenance')
+                                        <button class="btn btn-secondary btn-lg px-4" title="Vehículo en taller" disabled>
+                                            <i class="bi bi-person-x"></i> No Asignable
+                                        </button>
+                                    @else
+                                        <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'asignar']) }}"
+                                           class="btn btn-success btn-lg px-4">
+                                            <i class="bi bi-person-check"></i> Asignar
+                                        </a>
+                                    @endif
                                 @endcan
 
+                                {{-- REQUERIMIENTO F.6: BLOQUEO SOLICITUD --}}
                                 @can('create', \App\Models\VehicleRequest::class)
-                                    <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'solicitar']) }}"
-                                       class="btn btn-success btn-lg px-4">
-                                        <i class="bi bi-send"></i> Solicitar
-                                    </a>
+                                    @if($status == 'maintenance')
+                                        <button class="btn btn-secondary btn-lg px-4" title="Vehículo en taller" disabled>
+                                            <i class="bi bi-send-x"></i> No Disponible
+                                        </button>
+                                    @else
+                                        <a href="{{ route('solicitudes.create', ['vehiculo' => $item['id'], 'accion' => 'solicitar']) }}"
+                                           class="btn btn-success btn-lg px-4">
+                                            <i class="bi bi-send"></i> Solicitar
+                                        </a>
+                                    @endif
                                 @endcan
 
+                                {{-- BLOQUEO: NO MANDAR A MANTENIMIENTO SI YA ESTÁ AHÍ --}}
                                 @can('create', \App\Models\Maintenance::class)
-                                    <a href="{{ route('mantenimientos.create', ['vehicle_id' => $item['id']]) }}"
-                                       class="btn btn-warning btn-lg px-4">
-                                        <i class="bi bi-tools"></i> Mantenimiento
-                                    </a>
+                                    @if($status == 'maintenance')
+                                        <button class="btn btn-secondary btn-lg px-4" title="El vehículo ya se encuentra en mantenimiento" disabled>
+                                            <i class="bi bi-tools"></i> En Taller
+                                        </button>
+                                    @else
+                                        <a href="{{ route('mantenimientos.create', ['vehicle_id' => $item['id']]) }}"
+                                           class="btn btn-warning btn-lg px-4">
+                                            <i class="bi bi-tools"></i> Mantenimiento
+                                        </a>
+                                    @endif
                                 @endcan
                             </div>
 

@@ -23,20 +23,23 @@ class RequestController extends Controller
     {
         $token = session('access_token');
 
-        $response = $this->client->get('/api/vehicle-requests', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        try {
+            $response = $this->client->get('/api/vehicle-requests', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ]
+            ]);
 
-        $body = json_decode($response->getBody()->getContents(), true);
+            $body = json_decode($response->getBody()->getContents(), true);
+            $solicitudes = $body['data']['data'] ?? $body['data'] ?? [];
 
-        $solicitudes = $body['data']['data'] ?? [];
-
-        return view('solicitudes.index', compact('solicitudes'));
+            return view('solicitudes.index', compact('solicitudes'));
+        } catch (\Throwable $e) {
+            return view('solicitudes.index', ['solicitudes' => []])
+                ->with('error', 'No se pudo conectar con el servidor.');
+        }
     }
-
 
     public function create(Request $request)
     {
@@ -47,43 +50,54 @@ class RequestController extends Controller
         }
 
         $vehiculo = null;
-        $rutas = [];
-        $accion = $request->accion;
+        $choferes = []; 
+        $accion = $request->accion; 
 
-        if ($request->vehiculo) {
-            $response = $this->client->get("/api/vehicles/{$request->vehiculo}", [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $token,
-                ]
-            ]);
+        if ($accion === 'asignar') {
+            try {
+                $resDrivers = $this->client->get("/api/users/drivers", [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $token,
+                    ]
+                ]);
+                
+                $dataDrivers = json_decode($resDrivers->getBody()->getContents(), true);
 
-            $data = json_decode($response->getBody()->getContents(), true);
-            $vehiculo = $data['data'] ?? $data;
+                $choferes = $dataDrivers['data'] ?? [];
+
+            } catch (\Throwable $e) {
+                $choferes = [];
+            }
         }
 
-        $responseRutas = $this->client->get("/api/routes", [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ]
-        ]);
+        if ($request->vehiculo) {
+            try {
+                $response = $this->client->get("/api/vehicles/{$request->vehiculo}", [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $token,
+                    ]
+                ]);
+                $data = json_decode($response->getBody()->getContents(), true);
+                $vehiculo = $data['data'] ?? $data;
+            } catch (\Throwable $e) { $vehiculo = null; }
+        }
 
-        $dataRutas = json_decode($responseRutas->getBody()->getContents(), true);
+        // Se eliminó la carga de $rutas, ya que esto ahora pertenece a ViajeController
 
-        $rutas = $dataRutas['data']['data'] ?? [];
-
-
-        return view('solicitudes.create', compact('vehiculo', 'accion', 'rutas'));
+        return view('solicitudes.create', compact('vehiculo', 'accion', 'choferes'));
     }
-
 
     public function store(Request $request)
     {
         $token = session('access_token');
 
-        $multipart = [];
+        $endpoint = ($request->accion === 'asignar') 
+            ? '/api/vehicle-requests/direct-assignment' 
+            : '/api/vehicle-requests';
 
+        $multipart = [];
         foreach ($request->all() as $key => $val) {
             if ($request->hasFile($key)) {
                 $multipart[] = [
@@ -92,15 +106,17 @@ class RequestController extends Controller
                     'filename' => $val->getClientOriginalName()
                 ];
             } else {
-                $multipart[] = [
-                    'name'     => $key,
-                    'contents' => $val
-                ];
+                if ($key !== 'accion') {
+                    $multipart[] = [
+                        'name'     => $key,
+                        'contents' => $val
+                    ];
+                }
             }
         }
 
         try {
-            $this->client->post('/api/vehicle-requests', [
+            $this->client->post($endpoint, [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Authorization' => 'Bearer ' . $token,
@@ -108,31 +124,34 @@ class RequestController extends Controller
                 'multipart' => $multipart
             ]);
 
+            $mensaje = ($request->accion === 'asignar') ? 'Asignación directa creada con éxito' : 'Solicitud creada correctamente';
+
             return redirect()
-                ->route('vehiculos.index')
-                ->with('success', 'Solicitud creada correctamente');
+                ->route('solicitudes.index')
+                ->with('success', $mensaje);
+
         } catch (ClientException $e) {
-
-            if ($e->getResponse()->getStatusCode() === 422) {
-
-                $responseBody = json_decode(
-                    $e->getResponse()->getBody()->getContents(),
-                    true
-                );
-
-                $erroresApi = $responseBody['errors'] ?? [];
+            $responseBody = json_decode($e->getResponse()->getBody()->getContents(), true);
+            $statusCode = $e->getResponse()->getStatusCode();
+            
+            $errorMsg = $responseBody['error'] ?? $responseBody['message'] ?? 'Error al procesar la solicitud.';
+            
+            if ($statusCode === 422) {
+                $erroresValidacion = $responseBody['errors'] ?? [];
 
                 return redirect()
                     ->back()
-                    ->withErrors($erroresApi)
+                    ->withErrors($erroresValidacion)
+                    ->with('error', $errorMsg) 
                     ->withInput();
             }
 
-            throw $e;
+            return redirect()
+                ->back()
+                ->with('error', $errorMsg) 
+                ->withInput();
         }
     }
-
-    public function show() {}
 
     public function approve($id)
     {
@@ -147,8 +166,9 @@ class RequestController extends Controller
             ]);
 
             return back()->with('success', 'Solicitud aprobada');
-        } catch (\Throwable $e) {
-            return back()->with('error', 'No se pudo aprobar la solicitud');
+        } catch (ClientException $e) {
+            $body = json_decode($e->getResponse()->getBody()->getContents(), true);
+            return back()->with('error', $body['error'] ?? 'No se pudo aprobar la solicitud');
         }
     }
 
@@ -162,7 +182,7 @@ class RequestController extends Controller
                     'Authorization' => 'Bearer ' . $token,
                     'Accept' => 'application/json',
                 ],
-                'form_params' => [
+                'json' => [
                     'observation' => $request->observation
                 ]
             ]);
