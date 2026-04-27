@@ -5,10 +5,10 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\RequestController;
-
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RouteController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -30,7 +30,7 @@ Route::resource('vehiculos', VehicleController::class);
 Route::resource('mantenimientos', MaintenanceController::class);
 Route::resource('solicitudes', RequestController::class);
 Route::resource('viajes', TripController::class);
-
+Route::resource('rutas', RouteController::class);
 
 Route::get('/reports/availability',   [ReportController::class, 'availability'])->name('reports.availability');
 Route::get('/reports/fleet-usage',    [ReportController::class, 'fleetUsage'])->name('reports.fleet-usage');

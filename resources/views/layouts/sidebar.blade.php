@@ -25,6 +25,7 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+
                 @can('update', \App\Models\Request::class)
                 <li class="nav-header">GESTION DE SOLICITUDES</li>
 
@@ -47,6 +48,7 @@
                     </ul>
                 </li>
                 @endcan
+
                 <li class="nav-header">GESTION DE FLOTA</li>
 
                 <li class="nav-item">
@@ -80,6 +82,7 @@
                         </li>
                     </ul>
                 </li>
+
                 @can('create', \App\Models\User::class)
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -105,30 +108,34 @@
                     </ul>
                 </li>
                 @endcan
+
+                @can('viewAny', \App\Models\Route::class)
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon bi bi-key-fill"></i>
+                        <i class="nav-icon bi bi-map-fill"></i>
                         <p>
-                            Alquileres
+                            Rutas
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @can('create', \App\Models\Route::class)
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('rutas.create') }}" class="nav-link">
                                 <i class="nav-icon bi bi-plus-circle"></i>
-                                <p>Nuevo alquiler</p>
+                                <p>Crear ruta</p>
                             </a>
                         </li>
+                        @endcan
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ route('rutas.index') }}" class="nav-link">
                                 <i class="nav-icon bi bi-journal-text"></i>
-                                <p>Historial de alquileres</p>
+                                <p>Historial de rutas</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
+                @endcan
                 @can('viewAny', \App\Models\Maintenance::class)
                     <li class="nav-item">
                         <a href="#" class="nav-link">
@@ -156,6 +163,7 @@
                         </ul>
                     </li>
                 @endcan
+
                 @can('create', \App\Models\vehicle::class)
                 <li class="nav-header">REPORTES</li>
 
@@ -189,6 +197,7 @@
                     </ul>
                 </li>
                 @endcan
+
                 <li class="nav-header">SISTEMA</li>
 
                 <li class="nav-item">
